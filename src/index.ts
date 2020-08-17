@@ -2,6 +2,11 @@ import { DataProcessType, Metadata, ArgsType, ImageSample, Sample } from '@pipco
 
 const boa = require('@pipcook/boa');
 const tf = boa.import('tensorflow');
+const config = tf.compat.v1.ConfigProto();
+config.gpu_options.allow_growth = true;
+tf.compat.v1.InteractiveSession(boa.kwargs({
+  config:config
+}));
 
 /**
  * this is the data process plugin to process pasvoc format data. It supports resize the image and normalize the image
