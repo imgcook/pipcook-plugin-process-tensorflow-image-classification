@@ -30,8 +30,11 @@ const imageDataProcess: DataProcessType = async (data: ImageSample, metadata: Me
     image = tf.divide(image, 255);
   }
 
-  const ys = tf.one_hot(data.label.categoryId, Object.keys(metadata.labelMap).length);
-
+  let ys;
+  if (data?.label?.categoryId) {
+    ys = tf.one_hot(data.label.categoryId, Object.keys(metadata.labelMap).length);
+  }
+  
   metadata.feature = {
     shape: [ resize[0], resize[1], 3 ]
   };
