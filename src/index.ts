@@ -31,7 +31,7 @@ const imageDataProcess: DataProcessType = async (data: ImageSample, metadata: Me
   }
 
   let ys;
-  if (data?.label?.categoryId) {
+  if (data?.label?.categoryId !== undefined) {
     ys = tf.one_hot(data.label.categoryId, Object.keys(metadata.labelMap).length);
   }
   
