@@ -1,6 +1,12 @@
 import { DataProcessType, Metadata, ArgsType, ImageSample, Sample } from '@pipcook/pipcook-core';
+import * as path from 'path';
 
 const boa = require('@pipcook/boa');
+
+const sys = boa.import('sys');
+sys.path.insert(0, path.join(__dirname, '..'));
+const { getData, getY } = boa.import('processscript.index');
+
 const tf = boa.import('tensorflow');
 const config = tf.compat.v1.ConfigProto();
 config.gpu_options.allow_growth = true;
@@ -19,20 +25,11 @@ const imageDataProcess: DataProcessType = async (data: ImageSample, metadata: Me
     normalize = false
   } = args;
 
-  const content = tf.io.read_file(data.data);
-  let image = tf.image.decode_jpeg(content, boa.kwargs({
-    channels: 3
-  }));
-  if (resize) {
-    image = tf.image.resize(image, resize);
-  }
-  if (normalize) {
-    image = tf.divide(image, 255);
-  }
+  let image = getData(data.data, resize, normalize);
 
   let ys;
   if (data?.label?.categoryId !== undefined) {
-    ys = tf.one_hot(data.label.categoryId, Object.keys(metadata.labelMap).length);
+    ys = getY(data.label.categoryId, Object.keys(metadata.labelMap).length)
   }
   
   metadata.feature = {
